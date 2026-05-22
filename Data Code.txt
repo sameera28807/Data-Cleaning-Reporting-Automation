@@ -1,0 +1,111 @@
+# ============================================
+# DATA CLEANING & REPORTING AUTOMATION PROJECT
+# ============================================
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# --------------------------------------------
+# LOAD DATA
+# --------------------------------------------
+
+# You can replace this with your own CSV file
+# Example:
+# df = pd.read_csv("sales_data.csv")
+
+data = {
+    'Customer': ['John', 'Emma', 'John', None, 'Sophia'],
+    'Sales': [1200, 1500, 1200, 1800, None],
+    'Region': ['North', 'South', 'North', 'East', 'West']
+}
+
+df = pd.DataFrame(data)
+
+print("Original Dataset")
+print(df)
+
+# --------------------------------------------
+# DATA CLEANING
+# --------------------------------------------
+
+# 1. Remove Duplicate Rows
+df = df.drop_duplicates()
+
+# 2. Handle Missing Values
+
+# Fill missing customer names
+df['Customer'] = df['Customer'].fillna('Unknown')
+
+# Fill missing sales values with average sales
+df['Sales'] = df['Sales'].fillna(df['Sales'].mean())
+
+# 3. Standardize Text
+df['Region'] = df['Region'].str.upper()
+
+print("\nCleaned Dataset")
+print(df)
+
+# --------------------------------------------
+# GENERATE SUMMARY REPORT
+# --------------------------------------------
+
+total_sales = df['Sales'].sum()
+average_sales = df['Sales'].mean()
+top_region = df.groupby('Region')['Sales'].sum().idxmax()
+
+print("\nAUTOMATED REPORT")
+print("------------------------")
+print(f"Total Sales: {total_sales:.2f}")
+print(f"Average Sales: {average_sales:.2f}")
+print(f"Top Performing Region: {top_region}")
+
+# --------------------------------------------
+# VISUALIZATION
+# --------------------------------------------
+
+region_sales = df.groupby('Region')['Sales'].sum()
+
+plt.figure(figsize=(7,5))
+
+plt.bar(
+    region_sales.index,
+    region_sales.values
+)
+
+plt.title("Sales by Region")
+plt.xlabel("Region")
+plt.ylabel("Sales")
+
+plt.show()
+
+# --------------------------------------------
+# EXPORT CLEANED DATA
+# --------------------------------------------
+
+df.to_csv("cleaned_sales_report.csv", index=False)
+
+print("\nCleaned report saved as:")
+print("cleaned_sales_report.csv")
+
+Output:
+Original Dataset
+  Customer   Sales Region
+0     John  1200.0  North
+1     Emma  1500.0  South
+2     John  1200.0  North
+3      NaN  1800.0   East
+4   Sophia     NaN   West
+
+Cleaned Dataset
+  Customer   Sales Region
+0     John  1200.0  NORTH
+1     Emma  1500.0  SOUTH
+3  Unknown  1800.0   EAST
+4   Sophia  1500.0   WEST
+
+AUTOMATED REPORT
+------------------------
+Total Sales: 6000.00
+Average Sales: 1500.00
+Top Performing Region: EAST
+
